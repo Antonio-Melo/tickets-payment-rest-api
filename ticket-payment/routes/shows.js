@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const showsMiddleware = require('../middleware/shows');
 
 /* GET available shows*/
-router.get('/', (req, res) => res.sendStatus(200));
+router.get('/', showsMiddleware.getAvailableShows);
 
 module.exports = router;
