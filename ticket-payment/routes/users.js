@@ -6,8 +6,13 @@ const usersMiddleware = require('../middleware/users');
 /* USER ROUTES */
 
 /* GET Sign up user */
+/* TODO
+  - Check if user already exists with username and email
+  - Change encription from crypto to bcryptjs
+*/
 router.post('/signup',
-  usersMiddleware.checkUserDataRegister);
+  usersMiddleware.validateUserData,
+  usersMiddleware.registerUserInDB);
 
 /* POST Sign in user */
 router.post('/signin', (req, res) => res.sendStatus(200));
