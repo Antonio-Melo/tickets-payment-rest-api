@@ -11,6 +11,7 @@
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.3",
     "credit-card": "^3.0.1",
+    "crypto": "^1.0.1",
     "debug": "~0.7.4",
     "express": "^4.16.4",
     "mongoose": "^5.3.8",

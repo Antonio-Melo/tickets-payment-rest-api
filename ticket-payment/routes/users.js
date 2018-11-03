@@ -8,6 +8,7 @@ const usersMiddleware = require('../middleware/users');
 /* GET Sign up user */
 /* TODO
   - Check if user already exists with username and email
+  - Only the password uses bcryptjs the other only need to be encrypted with crypto
 */
 router.post('/signup',
   usersMiddleware.validateUserData,
