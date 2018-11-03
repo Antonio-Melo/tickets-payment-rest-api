@@ -1,6 +1,7 @@
 const CreditCard = require('credit-card');
 const usersModel = require('../database/schemas/users');
 
+/* Validate User data before saving in the database */
 exports.validateUserData = (req, res, next) => {
   const userData = req.body;
   let userDataToSend = {};
@@ -18,9 +19,6 @@ exports.validateUserData = (req, res, next) => {
   userDataToSend.name = userData.name;
 
   /* Validate password */
-  /* TODO
-    DECRYPT PASSWORD OR IT'S ENOUGHT THAT IS SIGNED BY PRIVATE KEY OF THE USER ?
-  */
   const regexPassword = /^(?=.*\d).{4,25}$/;
   if(!regexPassword.test(userData.password))
     return res.status(400).json({ message: 'Invalid data' });
@@ -55,6 +53,7 @@ exports.validateUserData = (req, res, next) => {
   next();
 };
 
+/* Save user in the database */
 exports.registerUserInDB = (req, res, next) =>{
   const newUser = new usersModel(req.userData);
 

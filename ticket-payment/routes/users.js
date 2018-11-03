@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const passport = require('../auth/passport');
 const usersMiddleware = require('../middleware/users');
 
 /* USER ROUTES */
@@ -8,14 +8,18 @@ const usersMiddleware = require('../middleware/users');
 /* GET Sign up user */
 /* TODO
   - Check if user already exists with username and email
-  - Change encription from crypto to bcryptjs
 */
 router.post('/signup',
   usersMiddleware.validateUserData,
   usersMiddleware.registerUserInDB);
 
 /* POST Sign in user */
-router.post('/signin', (req, res) => res.sendStatus(200));
+router.post('/signin', (req, res, next) => passport.authenticate('local',
+  (err, user) => {
+    if (err || !user)
+      return res.sendStatus(403);
+    return res.sendStatus(204);
+  })(req, res, next));
 
 /* GET User tickets */
 router.get('/tickets', (req, res) => res.sendStatus(200));
