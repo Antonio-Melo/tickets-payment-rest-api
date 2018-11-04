@@ -9,7 +9,7 @@ passport.use(new passportLocal.Strategy(
       user => {
         if (!user)
           return done(null, false);
-        return bcrypt.compare(password, user.passwordHashed, (err, result) => {
+        return bcrypt.compare(password, user.password, (err, result) => {
           if (!result)
             return done(null, false, { message: 'Incorrect password.' });
           return done(null, user);
