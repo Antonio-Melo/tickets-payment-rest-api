@@ -52,6 +52,10 @@ creditCardSchema.virtual('cvv').get(function () {
 });
 
 const usersSchema = mongoose.Schema({
+  uuid: {
+    type: String,
+    required: true
+  },
   username: {
     type: String,
     required: true

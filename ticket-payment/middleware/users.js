@@ -1,5 +1,21 @@
 const CreditCard = require('credit-card');
+const uuidv4 = require('uuid/v4');
 const usersModel = require('../database/schemas/users');
+
+/* Check if user already exists */
+exports.checkIfUserAlreadyExists = (req, res, next) => {
+  const username = req.body.username;
+  const email = req.body.email;
+
+  usersModel.findOne({ $or: [{'username': username}, {'email': email}] })
+    .then(
+      (err, user) => {
+        if (err || user)
+          return res.status(403).json({ message: 'A user is already created with this username'});
+        return next();
+      }
+    );
+};
 
 /* Validate User data before saving in the database */
 exports.validateUserData = (req, res, next) => {
@@ -10,40 +26,32 @@ exports.validateUserData = (req, res, next) => {
   const regexUsername = /^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/;
   if (!regexUsername.test(userData.username))
     return res.status(400).json({ message: 'Invalid data' });
-  //userDataToSend.username = userData.username;
 
   /* Validate name */
   const regexName = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
   if(!regexName.test(userData.name))
     return res.status(400).json({ message: 'Invalid data' });
-  //userDataToSend.name = userData.name;
 
   /* Validate password */
   const regexPassword = /^(?=.*\d).{4,25}$/;
   if(!regexPassword.test(userData.password))
     return res.status(400).json({ message: 'Invalid data' });
-  //userDataToSend.password = userData.password;
 
   /* Validate NIF */
   const regexNif = /^[0-9]{9}$/;
   if(!regexNif.test(userData.nif))
     return res.status(400).json({ message: 'Invalid data' });
-  //userDataToSend.nif = userData.nif;
 
   /* Validate email */
   const regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if(!regexEmail.test(userData.email))
     return res.status(400).json({ message: 'Invalid data' });
-  //userDataToSend.email = userData.email;
 
   /* Validate credit card */
   const validationCard = CreditCard.validate(userData.creditCard);
   if(!validationCard.validCardNumber || !validationCard.validExpiryMonth ||
   !validationCard.validExpiryYear || !validationCard.validCvv || validationCard.isExpired)
     return res.status(400).json({ message: 'Invalid data' });
-  //userDataToSend.cardType = userData.creditCard.cardType;
-  //userDataToSend.number = userData.creditCard.number;
-  //userDataToSend.cvv = userData.creditCard.cvv;
 
   // Create validity Date from month and year
   const validityMonth = parseInt(userData.creditCard.expiryMonth)-1;
@@ -53,7 +61,12 @@ exports.validateUserData = (req, res, next) => {
   delete userData['creditCard']['expiryYear'];
 
   req.userData = userData;
-  console.log({userData});
+  next();
+};
+
+/* Generate uuid */
+exports.generateUUID = (req, res, next) => {
+  req.userData.uuid = uuidv4();
   next();
 };
 
@@ -67,7 +80,7 @@ exports.registerUserInDB = (req, res, next) =>{
       return res.status(500).json({ message: 'Error adding user to db' });
     }
     else
-      return res.sendStatus(204);
+      return res.status(200).json({ 'uuid': req.userData.uuid });
   });
 };
 

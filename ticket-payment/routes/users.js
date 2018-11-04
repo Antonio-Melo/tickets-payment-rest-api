@@ -6,12 +6,10 @@ const usersMiddleware = require('../middleware/users');
 /* USER ROUTES */
 
 /* GET Sign up user */
-/* TODO
-  - Check if user already exists with username and email
-  - Generate uuid and send back to the app
-*/
 router.post('/signup',
+  usersMiddleware.checkIfUserAlreadyExists,
   usersMiddleware.validateUserData,
+  usersMiddleware.generateUUID,
   usersMiddleware.registerUserInDB);
 
 /* POST Sign in user */
