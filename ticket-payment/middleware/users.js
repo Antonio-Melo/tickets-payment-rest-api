@@ -2,6 +2,22 @@ const CreditCard = require('credit-card');
 const uuidv4 = require('uuid/v4');
 const usersModel = require('../database/schemas/users');
 
+/* Get user id from uuid */
+exports.getUserIdfromUUID = (req, res, next) => {
+  const uuid = req.query.uuid;
+
+  usersModel.findOne({ uuid })
+    .then(
+      user => {
+        if(!user)
+          return res.status(403).json({ message: 'Unauthorized' });
+
+        req.userId = user._id;
+        return next();
+      }
+    );
+};
+
 /* Check if user already exists */
 exports.checkIfUserAlreadyExists = (req, res, next) => {
   const username = req.body.username;
@@ -82,9 +98,4 @@ exports.registerUserInDB = (req, res, next) =>{
     else
       return res.status(200).json({ 'uuid': req.userData.uuid });
   });
-};
-
-/* Get tickets related to a user */
-exports.getUserTickets = (req, res, next) => {
-
 };

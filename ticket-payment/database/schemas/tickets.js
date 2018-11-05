@@ -4,13 +4,13 @@ const ticketsSchema = mongoose.Schema({
   number: {
     type: Number,
     required: true
-  }
+  },
   owner: {
-    type: Schema.Types.ObjectId, ref: 'user',
+    type: mongoose.Schema.Types.ObjectId, ref: 'user',
     required: true
   },
   show: {
-    type: Schema.Types.ObjectId, ref: 'show',
+    type: mongoose.Schema.Types.ObjectId, ref: 'show',
     required: true
   },
   validated: {

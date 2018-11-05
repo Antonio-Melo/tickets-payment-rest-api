@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const vouchersSchema = mongoose.Schema({
   owner: {
-    type: Schema.Types.ObjectId, ref: 'user',
+    type: mongoose.Schema.Types.ObjectId, ref: 'user',
     required: true
   }
 });

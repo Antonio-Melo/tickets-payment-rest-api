@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const passport = require('../auth/passport');
 const usersMiddleware = require('../middleware/users');
+const ticketsMiddleware = require('../middleware/tickets');
+const vouchersMiddleware = require('../middleware/vouchers');
 
 /* USER ROUTES */
 
@@ -21,13 +23,17 @@ router.post('/signin', (req, res, next) => passport.authenticate('local',
   })(req, res, next));
 
 /* GET User tickets */
-router.get('/tickets', (req, res) => res.sendStatus(200));
+router.get('/tickets',
+  usersMiddleware.getUserIdfromUUID,
+  ticketsMiddleware.getUserTickets);
 
 /* POST Buy tickets for some user */
 router.post('/tickets', (req, res) => res.sendStatus(200));
 
 /* GET User vouchers */
-router.get('/vouchers', (req, res) => res.sendStatus(200));
+router.get('/vouchers',
+  usersMiddleware.getUserIdfromUUID,
+  vouchersMiddleware.getUserVouchers);
 
 /* GET User transactions */
 router.get('/transactions', (req, res) => res.sendStatus(200));

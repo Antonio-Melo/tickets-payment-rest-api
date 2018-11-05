@@ -9,7 +9,7 @@ const showsSchema = mongoose.Schema({
     type: Number,
     required: true
   },
-  location: {
+  artist: {
     type: String,
     required: true
   },
