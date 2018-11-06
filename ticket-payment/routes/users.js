@@ -28,7 +28,9 @@ router.get('/tickets',
   ticketsMiddleware.getUserTickets);
 
 /* POST Buy tickets for some user */
-router.post('/tickets', (req, res) => res.sendStatus(200));
+router.post('/tickets',
+  usersMiddleware.verifyUser,
+  (req, res) => res.sendStatus(200));
 
 /* GET User vouchers */
 router.get('/vouchers',

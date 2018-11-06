@@ -76,6 +76,10 @@ const usersSchema = mongoose.Schema({
     type: String,
     required: true
   },
+  publicKeyHashed: {
+    type: String,
+    required: true
+  },
   creditCard: creditCardSchema,
   updated_at: { type: Date, default: Date.now }
 }, { collection: 'users' });
@@ -104,6 +108,21 @@ usersSchema.virtual('nif').get(function () {
   let decriptedNif = decipher.update(this.nifHashed, 'hex', 'utf8');
   decriptedNif += decipher.final('utf8');
   return decriptedNif;
+});
+
+/* Hash public key and decript */
+usersSchema.virtual('publicKey').set(function (key) {
+  const cipher = crypto.createCipher('aes-256-ctr', process.env.CRYPTO_SECRET);
+  let keyCrypted = cipher.update(key, 'utf8', 'hex');
+  keyCrypted += cipher.final('hex');
+  this.publicKeyHashed = keyCrypted;
+});
+
+usersSchema.virtual('publicKey').get(function (key){
+  const decipher = crypto.createDecipher('aes-256-ctr', process.env.CRYPTO_SECRET);
+  let decriptedKey = decipher.update(this.publicKeyHashed, 'hex', 'utf8');
+  decriptedKey += decipher.final('utf8');
+  return decriptedKey;
 });
 
 const usersModel = mongoose.model('user', usersSchema);
