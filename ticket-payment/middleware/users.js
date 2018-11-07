@@ -35,7 +35,10 @@ exports.verifyUser = (req, res, next) => {
 
 /* Get user id from uuid */
 exports.getUserIdfromUUID = (req, res, next) => {
-  const uuid = req.query.uuid;
+  if(req.method === 'GET')
+    uuid = req.query.uuid;
+  if(req.method === 'POST')
+    uuid = req.body.uuid;
 
   usersModel.findOne({ uuid })
     .then(

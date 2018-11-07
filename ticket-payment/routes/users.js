@@ -31,7 +31,7 @@ router.get('/tickets',
 /* POST Buy tickets for some user */
 router.post('/tickets',
   usersMiddleware.getUserIdfromUUID,
-  (req, res) => res.sendStatus(200));
+  ticketsMiddleware.buyTickets);
 
 /* GET User vouchers */
 /* TODO
