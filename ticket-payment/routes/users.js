@@ -4,6 +4,7 @@ const passport = require('../auth/passport');
 const usersMiddleware = require('../middleware/users');
 const ticketsMiddleware = require('../middleware/tickets');
 const vouchersMiddleware = require('../middleware/vouchers');
+const transactionsMiddleware = require('../middleware/transactions');
 
 /* USER ROUTES */
 
@@ -29,15 +30,23 @@ router.get('/tickets',
 
 /* POST Buy tickets for some user */
 router.post('/tickets',
-  usersMiddleware.verifyUser,
+  usersMiddleware.getUserIdfromUUID,
   (req, res) => res.sendStatus(200));
 
 /* GET User vouchers */
+/* TODO
+  - Add ENUM with type of voucher
+*/
 router.get('/vouchers',
   usersMiddleware.getUserIdfromUUID,
   vouchersMiddleware.getUserVouchers);
 
 /* GET User transactions */
-router.get('/transactions', (req, res) => res.sendStatus(200));
+/* TODO
+  - Change type of transaction to ENUM
+*/
+router.get('/transactions',
+  usersMiddleware.getUserIdfromUUID,
+  transactionsMiddleware.getUserTransactions);
 
 module.exports = router;

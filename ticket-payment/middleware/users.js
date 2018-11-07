@@ -11,7 +11,6 @@ exports.verifyUser = (req, res, next) => {
   if(req.method === 'POST')
     uuid = req.body.uuid;
 
-
   usersModel.findOne({ uuid })
     .then(
       user => {
