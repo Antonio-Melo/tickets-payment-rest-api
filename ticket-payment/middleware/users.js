@@ -4,12 +4,10 @@ const jwt = require('jsonwebtoken');
 const usersModel = require('../database/schemas/users');
 
 /* Verify user */
-exports.verifyUser = (req, res, next) => {
-  let uuid;
-  if(req.method === 'GET')
-    uuid = req.query.uuid;
-  if(req.method === 'POST')
-    uuid = req.body.uuid;
+exports.decodeAndVerifyUser = (req, res, next) => {
+  const encondedMessage = req.body.message;
+  const payload = jwt.decode(encondedMessage);
+  const uuid = payload.uuid;
 
   usersModel.findOne({ uuid })
     .then(
@@ -18,15 +16,13 @@ exports.verifyUser = (req, res, next) => {
           return res.status(403).json({ message: 'Unauthorized' });
 
         const publicKey = user.publicKey;
-        const encondedMessage = req.body.message;
         const verifyOptions = { 'algorithms': ['RS256']};
         jwt.verify(encondedMessage, publicKey, verifyOptions, (error, decoded) => {
           if(error)
             return res.status(403).json({ message: 'Unauthorized'});
 
-          if(decoded)
-            req.decodedMessage = decoded;
-
+          req.payload = payload;
+          req.payload.userId = user._id;
           return next();
         });
       }

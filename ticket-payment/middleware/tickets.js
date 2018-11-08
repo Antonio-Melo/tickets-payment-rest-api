@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Promise = require('bluebird');
+const uuidv4 = require('uuid/v4');
 
 const ticketsModel = require('../database/schemas/tickets');
 const showsModel = require('../database/schemas/shows');
@@ -12,7 +13,8 @@ exports.getUserTickets = (req, res, next) => {
 };
 
 exports.buyTicket = (show, user) => new Promise((resolve, reject) => {
-  const ticket = { owner: user, show: show };
+  const ticketUUID = uuidv4();
+  const ticket = { owner: user, show: show, uuid: ticketUUID };
   const newTicket = new ticketsModel(ticket);
 
   newTicket.save(err => {
@@ -23,8 +25,8 @@ exports.buyTicket = (show, user) => new Promise((resolve, reject) => {
 });
 
 exports.buyTickets = (req, res, next) => {
-  const user = mongoose.Types.ObjectId(req.userId);
-  const ticketsToBuy = req.body.ticketsToBuy;
+  const user = mongoose.Types.ObjectId(req.payload.userId);
+  const ticketsToBuy = req.payload.tickets;
 
   /* Verifies is shows exist */
   let shows = [];
@@ -37,21 +39,28 @@ exports.buyTickets = (req, res, next) => {
     if(results.length !== shows.length)
       return res.status(500).json({ message: 'Error: shows not valid' });
 
-    let showsIds = {};
+    let showsInfo = {};
     for(show of results)
-      showsIds[show.name] = show._id;
+      showsInfo[show.name] = [show._id, show.price];
 
     /* Creates promises to buy a individual ticket */
     let promiseCalls = [];
+    let totalNumberOfTickets = 0;
+    //let totalTransaction = 0;
+
     for (let showName in ticketsToBuy) {
       const showNumberOfTickets = parseInt(ticketsToBuy[showName]);
-      const showId = showsIds[showName];
+      totalNumberOfTickets += showNumberOfTickets;
+      const showId = showsInfo[showName][INDEX_NAME];
       for(let i = 0; i < showNumberOfTickets; i++)
         promiseCalls.push(this.buyTicket(showId, user));
     }
+    req.payload.totalNumberOfTickets = totalNumberOfTickets;
+    req.payload.showsInfo = showsInfo;
+    console.log(req.payload.showsInfo);
     /* Runs promises and waits for confirmation of all */
     return Promise.all(promiseCalls).then(results => {
-      return res.sendStatus(204);
+      return next();
     }).catch(error => res.status(500).json({ message: 'Error buying tickets' }));
   });
 };

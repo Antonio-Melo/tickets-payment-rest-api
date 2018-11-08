@@ -7,6 +7,9 @@ const vouchersMiddleware = require('../middleware/vouchers');
 const transactionsMiddleware = require('../middleware/transactions');
 
 /* USER ROUTES */
+/* TODO
+  -Remove crypto(Deprecated) and change to crypto-js
+*/
 
 /* GET Sign up user */
 router.post('/signup',
@@ -29,14 +32,18 @@ router.get('/tickets',
   ticketsMiddleware.getUserTickets);
 
 /* POST Buy tickets for some user */
+/* TODO
+  - Recive shows date and not just the name
+  - Auto increment number of ticket based on the show
+*/
 router.post('/tickets',
-  usersMiddleware.getUserIdfromUUID,
-  ticketsMiddleware.buyTickets);
+  usersMiddleware.decodeAndVerifyUser,
+  ticketsMiddleware.buyTickets,
+  vouchersMiddleware.generateVouchers,
+  transactionsMiddleware.createTransaction,
+  vouchersMiddleware.generateSpecialVoucher);
 
 /* GET User vouchers */
-/* TODO
-  - Add ENUM with type of voucher
-*/
 router.get('/vouchers',
   usersMiddleware.getUserIdfromUUID,
   vouchersMiddleware.getUserVouchers);

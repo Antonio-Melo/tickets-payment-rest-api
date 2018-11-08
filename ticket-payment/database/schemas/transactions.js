@@ -8,10 +8,6 @@ const transactionsSchema = mongoose.Schema({
   amount: {
     type: Number,
     required: true
-  },
-  type: {
-    type: Number,
-    required: false
   }
 });
 

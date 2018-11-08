@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const ticketsSchema = mongoose.Schema({
+  uuid: {
+    type: String,
+    required: true
+  },
   number: {
     type: Number,
     required: false
