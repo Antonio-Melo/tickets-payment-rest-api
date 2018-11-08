@@ -9,7 +9,8 @@ const INDEX_NAME = 0;
 
 exports.getUserTickets = (req, res, next) => {
   ticketsModel.find({ 'owner': req.userId })
-    .then(tickets => res.status(200).json({ tickets }));
+    .then(tickets => res.status(200).json({ tickets }))
+    .catch(err => res.status(500).json({ message: 'Error getting data from the database' }));
 };
 
 exports.buyTicket = (show, user) => new Promise((resolve, reject) => {
@@ -46,7 +47,6 @@ exports.buyTickets = (req, res, next) => {
     /* Creates promises to buy a individual ticket */
     let promiseCalls = [];
     let totalNumberOfTickets = 0;
-    //let totalTransaction = 0;
 
     for (let showName in ticketsToBuy) {
       const showNumberOfTickets = parseInt(ticketsToBuy[showName]);
@@ -57,10 +57,10 @@ exports.buyTickets = (req, res, next) => {
     }
     req.payload.totalNumberOfTickets = totalNumberOfTickets;
     req.payload.showsInfo = showsInfo;
-    console.log(req.payload.showsInfo);
+    
     /* Runs promises and waits for confirmation of all */
     return Promise.all(promiseCalls).then(results => {
       return next();
     }).catch(error => res.status(500).json({ message: 'Error buying tickets' }));
-  });
+  }).catch(err => res.status(500).json({ message: 'Error getting data from the database' }));
 };

@@ -4,7 +4,8 @@ const vouchersModel = require('../database/schemas/vouchers');
 
 exports.getUserTransactions = (req, res, next) => {
   transactionsModel.find({ 'user': req.userId })
-    .then(transactions => res.status(200).json({ transactions }));
+    .then(transactions => res.status(200).json({ transactions }))
+    .catch(err => res.status(500).json({ message: 'Error getting data from the database' }));
 };
 
 exports.createTransaction = (req, res, next) => {

@@ -26,7 +26,7 @@ exports.decodeAndVerifyUser = (req, res, next) => {
           return next();
         });
       }
-    );
+    ).catch(err => res.status(500).json({ message: 'Error getting data from the database' }));
 };
 
 /* Get user id from uuid */
@@ -45,7 +45,7 @@ exports.getUserIdfromUUID = (req, res, next) => {
         req.userId = user._id;
         return next();
       }
-    );
+    ).catch(err => res.status(500).json({ message: 'Error getting data from the database' }));
 };
 
 /* Check if user already exists */
@@ -60,7 +60,7 @@ exports.checkIfUserAlreadyExists = (req, res, next) => {
           return res.status(403).json({ message: 'A user is already created with this username'});
         return next();
       }
-    );
+    ).catch(err => res.status(500).json({ message: 'Error getting data from the database' }));
 };
 
 /* Validate User data before saving in the database */
@@ -121,11 +121,8 @@ exports.registerUserInDB = (req, res, next) =>{
   const newUser = new usersModel(req.userData);
 
   newUser.save(err => {
-    if(err){
-      console.log({err});
+    if(err)
       return res.status(500).json({ message: 'Error adding user to db' });
-    }
-    else
-      return res.status(200).json({ 'uuid': req.userData.uuid });
+    return res.status(200).json({ 'uuid': req.userData.uuid });
   });
 };
