@@ -40,7 +40,7 @@ exports.generateSpecialVoucher = (req, res, next) => {
     const newVoucher = new vouchersModel(voucher);
     newVoucher.save(err => {
       if(err)
-        return res.status(500).json({ message: 'Erro creatin special voucher'});
+        return res.status(500).json({ message: 'Erro creating special voucher'});
       return res.sendStatus(204);
     });
   }else return res.sendStatus(204);
@@ -56,4 +56,25 @@ exports.generateVouchers = (req, res, next) => {
  return Promise.all(promiseCalls).then(results => {
    return next();
  }).catch(err => res.status(500).json({ message: 'Error creating vouchers' }));
+};
+
+
+exports.validateVoucher = (user, voucherUUID) => new Promise((resolve, reject) => {
+  const userID = mongoose.Types.ObjectId(user);
+  vouchersModel.findOneAndUpdate({ uuid: voucherUUID, owner: userID, validated: false }, { validated: true})
+  .then(() => resolve())
+  .catch(err => reject());
+});
+
+exports.validateVouchers = (req, res, next) => {
+  const userID = req.userId;
+  const voucherToValidate = req.body.vouchers;
+  let promiseCalls = [];
+
+  for(let i = 0; i < voucherToValidate.length; i++)
+    promiseCalls.push(this.validateVoucher(userID, voucherToValidate[i]));
+
+  return Promise.all(promiseCalls).then(results => {
+    return res.sendStatus(204);
+  }).catch(error => res.status(500).json({ messsage: 'Error validating vouchers' }));
 };

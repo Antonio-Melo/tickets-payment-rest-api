@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const ticketsMiddleware = require('../middleware/tickets');
+const vouchersMiddleware = require('../middleware/vouchers');
 const usersMiddleware = require('../middleware/users');
 
 /* VALIDATION */
@@ -9,10 +10,11 @@ const usersMiddleware = require('../middleware/users');
 /* POST validate tickets */
 router.post('/tickets',
   usersMiddleware.getUserIdfromUUID,
-  ticketsMiddleware.validateTickets,
-);
+  ticketsMiddleware.validateTickets);
 
 /* POST validate vouchers */
-router.post('/vouchers', (req, res) => res.sendStatus(200));
+router.post('/vouchers',
+  usersMiddleware.getUserIdfromUUID,
+  vouchersMiddleware.validateVouchers);
 
 module.exports = router;

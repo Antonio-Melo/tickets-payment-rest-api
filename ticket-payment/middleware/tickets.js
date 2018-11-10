@@ -87,7 +87,7 @@ exports.validateTickets = (req, res, next) => {
   for(let i = 0; i < ticketToValidate.length; i++)
     promiseCalls.push(this.validateTicket(userID, ticketToValidate[i]));
 
-  new Promise.all(promiseCalls).then(results => {
-    return res.status(200).json({ results });
+  return Promise.all(promiseCalls).then(results => {
+    return res.sendStatus(204);
   }).catch(error => res.status(500).json({ messsage: 'Error validating tickets' }));
 };
