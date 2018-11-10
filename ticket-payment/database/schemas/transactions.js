@@ -8,7 +8,12 @@ const transactionsSchema = mongoose.Schema({
   amount: {
     type: Number,
     required: true
-  }
+  },
+  type: {
+    type: String,
+    enum: ['TICKETS', 'CAFETERIA'],
+    required: true
+  },
 });
 
 const transactionsModel = mongoose.model('transaction', transactionsSchema);

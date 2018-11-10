@@ -11,7 +11,8 @@ const vouchersSchema = mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['POPCORN', 'DRINK', 'FIVEPERCENTE']
+    enum: ['POPCORN', 'DRINK', 'FIVEPERCENTE'],
+    required: true
   },
   validated: {
     type: Boolean,

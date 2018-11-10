@@ -5,7 +5,9 @@ const uuidv4 = require('uuid/v4');
 const ticketsModel = require('../database/schemas/tickets');
 const showsModel = require('../database/schemas/shows');
 
-const INDEX_NAME = 0;
+const INDEX_ID = 0;
+const INDEX_NR_TICKETS = 1;
+const INDEX_DATE = 0;
 
 exports.getUserTickets = (req, res, next) => {
   ticketsModel.find({ 'owner': req.userId })
@@ -31,12 +33,17 @@ exports.buyTickets = (req, res, next) => {
 
   /* Verifies is shows exist */
   let shows = [];
-  for(let showName in ticketsToBuy)
+  let dates = [];
+  for(let showName in ticketsToBuy){
     shows.push(showName);
+    dates.push(ticketsToBuy[showName][INDEX_DATE]);
+  }
 
   showsModel.find({
-    'name': { $in: shows }
+    'name': { $in: shows },
+    'date': { $in: dates }
   }).then(results => {
+    console.log(results);
     if(results.length !== shows.length)
       return res.status(500).json({ message: 'Error: shows not valid' });
 
@@ -49,15 +56,15 @@ exports.buyTickets = (req, res, next) => {
     let totalNumberOfTickets = 0;
 
     for (let showName in ticketsToBuy) {
-      const showNumberOfTickets = parseInt(ticketsToBuy[showName]);
+      const showNumberOfTickets = parseInt(ticketsToBuy[showName][INDEX_NR_TICKETS]);
       totalNumberOfTickets += showNumberOfTickets;
-      const showId = showsInfo[showName][INDEX_NAME];
+      const showId = showsInfo[showName][INDEX_ID];
       for(let i = 0; i < showNumberOfTickets; i++)
         promiseCalls.push(this.buyTicket(showId, user));
     }
     req.payload.totalNumberOfTickets = totalNumberOfTickets;
     req.payload.showsInfo = showsInfo;
-    
+
     /* Runs promises and waits for confirmation of all */
     return Promise.all(promiseCalls).then(results => {
       return next();

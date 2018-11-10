@@ -5,10 +5,6 @@ const showsSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  lotation: {
-    type: Number,
-    required: true
-  },
   artist: {
     type: String,
     required: true

@@ -33,7 +33,6 @@ router.get('/tickets',
 
 /* POST Buy tickets for some user */
 /* TODO
-  - Recive shows date and not just the name
   - Auto increment number of ticket based on the show
 */
 router.post('/tickets',

@@ -16,10 +16,11 @@ exports.createTransaction = (req, res, next) => {
   const PRICE_INDEX = 1;
 
   for(let showName in ticketsToBuy)
-    totalTransaction += showsInfo[showName][PRICE_INDEX] * parseInt(ticketsToBuy[showName]);
+    totalTransaction += showsInfo[showName][PRICE_INDEX] * parseInt(ticketsToBuy[showName][1]);
 
   req.payload.totalTransaction = totalTransaction;
-  const transaction = { user: user, amount: totalTransaction };
+  const transaction = { user: user, amount: totalTransaction , type: 'TICKETS'};
+  console.log(transaction);
   const newTransaction = new transactionsModel(transaction);
 
   newTransaction.save(err => {
