@@ -43,7 +43,6 @@ exports.buyTickets = (req, res, next) => {
     'name': { $in: shows },
     'date': { $in: dates }
   }).then(results => {
-    console.log(results);
     if(results.length !== shows.length)
       return res.status(500).json({ message: 'Error: shows not valid' });
 
@@ -70,4 +69,25 @@ exports.buyTickets = (req, res, next) => {
       return next();
     }).catch(error => res.status(500).json({ message: 'Error buying tickets' }));
   }).catch(err => res.status(500).json({ message: 'Error getting data from the database' }));
+};
+
+exports.validateTicket = (user, ticketUUID) => new Promise((resolve, reject) => {
+  const userID = mongoose.Types.ObjectId(user);
+  ticketsModel.findOneAndUpdate({ uuid: ticketUUID, owner: userID, validated: false }, { validated: true})
+  .then(ticket => resolve())
+  .catch(err => reject());
+});
+
+exports.validateTickets = (req, res, next) => {
+  const userID = req.userId;
+  const ticketToValidate = req.body.tickets;
+
+  let promiseCalls = [];
+
+  for(let i = 0; i < ticketToValidate.length; i++)
+    promiseCalls.push(this.validateTicket(userID, ticketToValidate[i]));
+
+  new Promise.all(promiseCalls).then(results => {
+    return res.status(200).json({ results });
+  }).catch(error => res.status(500).json({ messsage: 'Error validating tickets' }));
 };

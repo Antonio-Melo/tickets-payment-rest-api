@@ -48,9 +48,6 @@ router.get('/vouchers',
   vouchersMiddleware.getUserVouchers);
 
 /* GET User transactions */
-/* TODO
-  - Change type of transaction to ENUM
-*/
 router.get('/transactions',
   usersMiddleware.getUserIdfromUUID,
   transactionsMiddleware.getUserTransactions);
