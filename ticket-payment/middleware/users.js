@@ -70,34 +70,41 @@ exports.validateUserData = (req, res, next) => {
 
   /* Validate username */
   const regexUsername = /^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/;
-  if (!regexUsername.test(userData.username))
-    return res.status(400).json({ message: 'Invalid data' });
+  if (!regexUsername.test(userData.username)) {
+    return res.status(400).json({ message: 'Invalid username data' });
+  }
 
   /* Validate name */
   const regexName = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
-  if(!regexName.test(userData.name))
-    return res.status(400).json({ message: 'Invalid data' });
+  if(!regexName.test(userData.name)) {
+    return res.status(400).json({ message: 'Invalid name data' });
+  }
 
   /* Validate password */
   const regexPassword = /^(?=.*\d).{4,25}$/;
-  if(!regexPassword.test(userData.password))
-    return res.status(400).json({ message: 'Invalid data' });
+  if(!regexPassword.test(userData.password)) {
+    return res.status(400).json({ message: 'Invalid password data' });
+  }
 
   /* Validate NIF */
   const regexNif = /^[0-9]{9}$/;
-  if(!regexNif.test(userData.nif))
-    return res.status(400).json({ message: 'Invalid data' });
+  if(!regexNif.test(userData.nif)) {
+    return res.status(400).json({ message: 'Invalid nif data' });
+  }
 
   /* Validate email */
   const regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  if(!regexEmail.test(userData.email))
-    return res.status(400).json({ message: 'Invalid data' });
+  if(!regexEmail.test(userData.email)) {
+    return res.status(400).json({ message: 'Invalid email data' });
+  }
 
   /* Validate credit card */
-  const validationCard = CreditCard.validate(userData.creditCard);
+  /*const validationCard = CreditCard.validate(userData.creditCard);
   if(!validationCard.validCardNumber || !validationCard.validExpiryMonth ||
-  !validationCard.validExpiryYear || !validationCard.validCvv || validationCard.isExpired)
-    return res.status(400).json({ message: 'Invalid data' });
+  !validationCard.validExpiryYear || !validationCard.validCvv || validationCard.isExpired) {
+    console.log('entrei credit card');
+    return res.status(400).json({ message: 'Invalid credit card data' });
+  }*/
 
   // Create validity Date from month and year
   const validityMonth = parseInt(userData.creditCard.expiryMonth)-1;
@@ -121,8 +128,9 @@ exports.registerUserInDB = (req, res, next) =>{
   const newUser = new usersModel(req.userData);
 
   newUser.save(err => {
-    if(err)
+    if(err) {
       return res.status(500).json({ message: 'Error adding user to db' });
+    }
     return res.status(200).json({ 'uuid': req.userData.uuid });
   });
 };
