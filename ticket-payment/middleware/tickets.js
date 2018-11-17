@@ -4,15 +4,30 @@ const uuidv4 = require('uuid/v4');
 
 const ticketsModel = require('../database/schemas/tickets');
 const showsModel = require('../database/schemas/shows');
+const showsMiddleware = require('./shows');
 
 const INDEX_ID = 0;
 const INDEX_NR_TICKETS = 1;
 const INDEX_DATE = 0;
 
 exports.getUserTickets = (req, res, next) => {
-  ticketsModel.find({ 'owner': req.userId })
-    .then(tickets => res.status(200).json({ tickets }))
-    .catch(err => res.status(500).json({ message: 'Error getting data from the database' }));
+  const userId = req.userId;
+
+  ticketsModel.find({ 'owner': req.userId }, 'show -_id')
+    .then(tickets => {
+      let showsIds = [];
+      let uniqueShowsIds = [];
+      let promiseCalls = [];
+      
+      tickets.forEach(showJson => showsIds.push(showJson.show))
+      uniqueShowsIds = Array.from(new Set(showsIds));
+      uniqueShowsIds.forEach(showId => promiseCalls.push(showsMiddleware.getShowAndUserTickets(showId, userId)));
+
+      Promise.all(promiseCalls).then(results => {
+        console.log(results);
+        return res.status(200).json({ shows: results});
+      }).catch(err => res.status(500).json({ message: 'Error getting tickets' }));
+    }).catch(err => res.status(500).json({ message:  `Error getting data from the database: ${err}` }));
 };
 
 exports.buyTicket = (show, user) => new Promise((resolve, reject) => {
