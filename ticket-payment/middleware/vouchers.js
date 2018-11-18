@@ -10,7 +10,7 @@ exports.getUserVouchers = (req, res, next) => {
 
 exports.generateVoucher = payload => new Promise((resolve, reject) => {
   const voucherUUID = uuidv4();
-  const type = (Math.random() < 0.5 ? "DRINK" : "POPCORN");
+  const type = (Math.random() < 0.5 ? "DRINK" : "FOOD");
   const user = mongoose.Types.ObjectId(payload.userId);
   const voucher = {
     uuid: voucherUUID,
