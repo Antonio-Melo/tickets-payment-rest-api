@@ -13,7 +13,6 @@ exports.getAvailableShows = (req, res, next) => {
 exports.getShowAndUserTickets = (showId, userId) => new Promise((resolve) => {
   const showAndTickets = {};
   showsModel.findById(showId).then(show => {
-    console.log({show});
     showAndTickets.showId = show.id;
     showAndTickets.showName = show.name;
     showAndTickets.artist = show.artist;
@@ -21,7 +20,6 @@ exports.getShowAndUserTickets = (showId, userId) => new Promise((resolve) => {
     showAndTickets.price = show.price;
 
     ticketsModel.find({ owner: userId, show: showId}, 'uuid -_id').then(tickets => {
-      console.log({tickets});
       showAndTickets.nrTickets = tickets.length;
       showAndTickets.tickets = tickets;
       return resolve(showAndTickets);
