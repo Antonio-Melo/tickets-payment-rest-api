@@ -23,7 +23,7 @@ router.post('/signin', (req, res, next) => passport.authenticate('local',
   (err, user) => {
     if (err || !user)
       return res.sendStatus(403);
-    
+
     return res.status(200).json({ username: user.username, name: user.name, email: user.email, uuid: user.uuid });
   })(req, res, next));
 
@@ -52,5 +52,10 @@ router.get('/vouchers',
 router.get('/transactions',
   usersMiddleware.getUserIdfromUUID,
   transactionsMiddleware.getUserTransactions);
+
+/* POST User order */
+router.post('/order',
+  usersMiddleware.getUserIdfromUUID,
+  transactionsMiddleware.createCafeteriaTransaction);
 
 module.exports = router;

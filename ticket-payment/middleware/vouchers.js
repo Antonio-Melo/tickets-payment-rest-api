@@ -62,7 +62,12 @@ exports.generateVouchers = (req, res, next) => {
 exports.validateVoucher = (user, voucherUUID) => new Promise((resolve, reject) => {
   const userID = mongoose.Types.ObjectId(user);
   vouchersModel.findOneAndUpdate({ uuid: voucherUUID, owner: userID, validated: false }, { validated: true})
-  .then(() => resolve())
+  .then(voucher => {
+    console.log(voucher);
+    if(voucher  != null)
+      return resolve();
+    return reject();
+  })
   .catch(err => reject());
 });
 
@@ -78,3 +83,9 @@ exports.validateVouchers = (req, res, next) => {
     return res.sendStatus(204);
   }).catch(error => res.status(500).json({ messsage: 'Error validating vouchers' }));
 };
+
+exports.getVoucherType = (uuidVoucher) => new Promise(resolve => {
+  vouchersModel.findOne({ 'uuid': uuidVoucher }).then(voucher => {
+    return resolve(voucher.type);
+  });
+});
