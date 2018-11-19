@@ -41,9 +41,9 @@ exports.generateSpecialVoucher = (req, res, next) => {
     newVoucher.save(err => {
       if(err)
         return res.status(500).json({ message: 'Erro creating special voucher'});
-      return res.status(200).json({ message: 'Success'});
+      return res.status(200).json({ tickets: req.ticketsUUIDsArray});
     });
-  }else return res.status(200).json({ message: 'Success'});;
+  }else return res.status(200).json({ tickets: req.ticketsUUIDsArray});;
 };
 
 exports.generateVouchers = (req, res, next) => {

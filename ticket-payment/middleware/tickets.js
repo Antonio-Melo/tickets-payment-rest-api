@@ -37,7 +37,7 @@ exports.buyTicket = (show, user) => new Promise((resolve, reject) => {
   newTicket.save(err => {
     if(err)
       return reject();
-    return resolve();
+    return resolve(ticketUUID);
   });
 });
 
@@ -80,6 +80,7 @@ exports.buyTickets = (req, res, next) => {
 
     /* Runs promises and waits for confirmation of all */
     return Promise.all(promiseCalls).then(results => {
+      req.ticketsUUIDsArray = results;
       return next();
     }).catch(error => res.status(500).json({ message: 'Error buying tickets' }));
   }).catch(err => res.status(500).json({ message: 'Error getting data from the database' }));
