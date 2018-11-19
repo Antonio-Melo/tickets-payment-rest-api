@@ -117,7 +117,7 @@ exports.createCafeteriaTransaction = (req, res, next) => {
         newOrder.save(err => {
           if(err)
             return res.status(500).json({ message: 'Error creating order' });
-          return res.sendStatus(204);s
+          return res.status(200).json({ message: 'Sucess creating order' });
         });
       });
     });
@@ -133,7 +133,7 @@ exports.createCafeteriaTransaction = (req, res, next) => {
       newOrder.save(err => {
         if(err)
           return res.status(500).json({ message: 'Error creating order' });
-        return res.sendStatus(204);
+        return res.status(200).json({ message: 'Sucess creating order' });
       });
     });
   }

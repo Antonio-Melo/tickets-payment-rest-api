@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const vouchersModel = require('../database/schemas/vouchers');
 
 exports.getUserVouchers = (req, res, next) => {
-  vouchersModel.find({ 'owner': req.userId })
+  vouchersModel.find({ 'owner': req.userId, validated: false })
     .then(vouchers => res.status(200).json({ vouchers }))
     .catch(err => res.status(500).json({ message: 'Error getting data from the database' }));
 }
@@ -41,9 +41,9 @@ exports.generateSpecialVoucher = (req, res, next) => {
     newVoucher.save(err => {
       if(err)
         return res.status(500).json({ message: 'Erro creating special voucher'});
-      return res.sendStatus(204);
+      return res.status(200).json({ message: 'Success'});
     });
-  }else return res.sendStatus(204);
+  }else return res.status(200).json({ message: 'Success'});;
 };
 
 exports.generateVouchers = (req, res, next) => {
