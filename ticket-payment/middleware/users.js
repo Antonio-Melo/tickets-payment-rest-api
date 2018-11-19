@@ -134,3 +134,15 @@ exports.registerUserInDB = (req, res, next) =>{
     return res.status(200).json({ 'uuid': req.userData.uuid });
   });
 };
+
+exports.saveNewPublicKey = (req, res, next) => {
+  const publicKey = req.body.publicKey;
+  const user = req.user;
+  if(publicKey)
+    usersModel.findById(user._id).then(user => {
+      user.publicKey = publicKey;
+      user.save(() => res.status(200).json({ username: user.username, name: user.name, email: user.email, uuid: user.uuid }));
+    });
+  else
+    return res.status(200).json({ username: user.username, name: user.name, email: user.email, uuid: user.uuid });
+};

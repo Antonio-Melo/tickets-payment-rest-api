@@ -112,6 +112,7 @@ usersSchema.virtual('nif').get(function () {
 
 /* Hash public key and decript */
 usersSchema.virtual('publicKey').set(function (key) {
+  console.log('ESTOU AQUI MALUCOS');
   const cipher = crypto.createCipher('aes-256-ctr', process.env.CRYPTO_SECRET);
   let keyCrypted = cipher.update(key, 'utf8', 'hex');
   keyCrypted += cipher.final('hex');

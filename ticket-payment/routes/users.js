@@ -23,8 +23,8 @@ router.post('/signin', (req, res, next) => passport.authenticate('local',
   (err, user) => {
     if (err || !user)
       return res.sendStatus(403);
-
-    return res.status(200).json({ username: user.username, name: user.name, email: user.email, uuid: user.uuid });
+    req.user = user;
+    return usersMiddleware.saveNewPublicKey(req, res, next);
   })(req, res, next));
 
 /* GET User tickets */
