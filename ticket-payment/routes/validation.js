@@ -4,7 +4,7 @@ const router = express.Router();
 const ticketsMiddleware = require('../middleware/tickets');
 const vouchersMiddleware = require('../middleware/vouchers');
 const usersMiddleware = require('../middleware/users');
-const ordersMiddleware = require('../middleware/order');
+const ordersMiddleware = require('../middleware/orders');
 
 /* VALIDATION */
 

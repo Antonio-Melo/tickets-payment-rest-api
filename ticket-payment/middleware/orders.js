@@ -8,12 +8,12 @@ exports.getOrders = (req, res, next) => {
 };
 
 exports.validateOrder = (req, res, next) => {
-  ordersModel.find({ _id: req.orderId}).then(order =>
+  ordersModel.find({ _id: req.orderId}).then(order => {
     order.validated = true;
     order.save(err => {
       if(err)
         return res.status(500).json({ message: 'Error validating order' });
       return res.status(200).json({ message: 'Success validating order' });
     })
-  );
+  });
 };

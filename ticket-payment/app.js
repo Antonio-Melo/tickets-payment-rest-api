@@ -9,6 +9,7 @@ const database = require('./database/');
 const usersRoutes = require('./routes/users');
 const showsRoutes = require('./routes/shows');
 const validationRoutes = require('./routes/validation');
+const ordersRoutes = require('./routes/orders');
 
 const app = express();
 
@@ -27,6 +28,7 @@ database.connect();
 app.use('/users', usersRoutes);
 app.use('/shows', showsRoutes);
 app.use('/validation', validationRoutes);
+app.use('/validation', ordersRoutes);
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
