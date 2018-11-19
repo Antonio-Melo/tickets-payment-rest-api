@@ -23,7 +23,6 @@ exports.createTransaction = (req, res, next) => {
 
   req.payload.totalTransaction = totalTransaction;
   const transaction = { user: user, amount: totalTransaction , type: 'TICKETS'};
-  console.log(transaction);
   const newTransaction = new transactionsModel(transaction);
 
   newTransaction.save(err => {
@@ -47,19 +46,14 @@ exports.createTransaction = (req, res, next) => {
 */
 exports.createCafeteriaTransaction = (req, res, next) => {
   const order = req.payload.order;
-  console.log({order});
   const user = mongoose.Types.ObjectId(req.payload.userId);
-  console.log({user});
   const vouchers = req.payload.vouchers;
   let totalTransaction = 0;
   const promiseCalls = [];
   let orderString = "";
 
   for(let product in order){
-    console.log({product});
-    console.log(order[product]);
     const numberOfProduct = parseInt(order[product], 10);
-    console.log(numberOfProduct);
     if(numberOfProduct != 0)
       orderString += product + ": " + numberOfProduct + " ";
     switch (product) {
@@ -79,8 +73,6 @@ exports.createCafeteriaTransaction = (req, res, next) => {
         break;
     }
   }
-  console.log({totalTransaction});
-  console.log({orderString});
 
   if(vouchers != null){
     vouchers.forEach(uuid => {
@@ -103,12 +95,10 @@ exports.createCafeteriaTransaction = (req, res, next) => {
             break;
         }
       });
-      console.log({totalTransactionAfter: totalTransaction});
 
       const transaction = { user: user, amount: totalTransaction , type: 'CAFETERIA'};
       const newTransaction = new transactionsModel(transaction);
       newTransaction.save(err => {
-        console.log(err);
         if(err)
           return res.status(500).json({ message: 'Error creating transaction' });
 
@@ -125,7 +115,6 @@ exports.createCafeteriaTransaction = (req, res, next) => {
     const transaction = { user: user, amount: totalTransaction , type: 'CAFETERIA'};
     const newTransaction = new transactionsModel(transaction);
     newTransaction.save(err => {
-      console.log(err);
       if(err)
         return res.status(500).json({ message: 'Error creating transaction' });
       const order = { user: user, order: orderString, total: totalTransaction, username: req.payload.username };

@@ -63,7 +63,6 @@ exports.validateVoucher = (user, voucherUUID) => new Promise((resolve, reject) =
   const userID = mongoose.Types.ObjectId(user);
   vouchersModel.findOneAndUpdate({ uuid: voucherUUID, owner: userID, validated: false }, { validated: true})
   .then(voucher => {
-    console.log(voucher);
     if(voucher  != null)
       return resolve();
     return reject();
