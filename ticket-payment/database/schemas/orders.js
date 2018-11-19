@@ -12,6 +12,10 @@ const ordersSchema = mongoose.Schema({
   total: {
     type: Number,
     required: true
+  },
+  validated: {
+    type: Boolean,
+    default: false
   }
 });
 
