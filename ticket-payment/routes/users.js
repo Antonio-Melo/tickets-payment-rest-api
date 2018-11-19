@@ -55,7 +55,7 @@ router.get('/transactions',
 
 /* POST User order */
 router.post('/order',
-  usersMiddleware.getUserIdfromUUID,
+  usersMiddleware.decodeAndVerifyUser,
   transactionsMiddleware.createCafeteriaTransaction);
 
 module.exports = router;

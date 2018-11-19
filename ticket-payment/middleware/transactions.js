@@ -3,6 +3,7 @@ const Promise = require('bluebird');
 const vouchersMiddleware = require('./vouchers');
 const transactionsModel = require('../database/schemas/transactions');
 const vouchersModel = require('../database/schemas/vouchers');
+const ordersModel = require('../database/schemas/orders');
 
 exports.getUserTransactions = (req, res, next) => {
   transactionsModel.find({ 'user': req.userId })
@@ -45,16 +46,22 @@ exports.createTransaction = (req, res, next) => {
 }
 */
 exports.createCafeteriaTransaction = (req, res, next) => {
-  const order = req.body.order;
-  const user = mongoose.Types.ObjectId(req.userId);
-  const vouchers = req.body.vouchers;
+  const order = req.payload.order;
+  console.log({order});
+  const user = mongoose.Types.ObjectId(req.payload.userId);
+  console.log({user});
+  const vouchers = req.payload.vouchers;
   let totalTransaction = 0;
   const promiseCalls = [];
+  let orderString = "";
 
   for(let product in order){
     console.log({product});
-    console.log(order.product);
+    console.log(order[product]);
     const numberOfProduct = parseInt(order[product], 10);
+    console.log(numberOfProduct);
+    if(numberOfProduct != 0)
+      orderString += product + ": " + numberOfProduct + " ";
     switch (product) {
       case 'coffee':
         totalTransaction += 1 * numberOfProduct;
@@ -73,8 +80,9 @@ exports.createCafeteriaTransaction = (req, res, next) => {
     }
   }
   console.log({totalTransaction});
+  console.log({orderString});
 
-  if(req.body.vouchers != null){
+  if(vouchers != null){
     vouchers.forEach(uuid => {
       promiseCalls.push(vouchersMiddleware.getVoucherType(uuid));
     });
@@ -95,14 +103,22 @@ exports.createCafeteriaTransaction = (req, res, next) => {
             break;
         }
       });
+      console.log({totalTransactionAfter: totalTransaction});
 
       const transaction = { user: user, amount: totalTransaction , type: 'CAFETERIA'};
       const newTransaction = new transactionsModel(transaction);
       newTransaction.save(err => {
-        //console.log(err);
+        console.log(err);
         if(err)
           return res.status(500).json({ message: 'Error creating transaction' });
-        return res.sendStatus(204);
+
+        const order = { user: user, order: orderString, total: totalTransaction };
+        const newOrder = new ordersModel(order);
+        newOrder.save(err => {
+          if(err)
+            return res.status(500).json({ message: 'Error creating order' });
+          return res.sendStatus(204);s
+        });
       });
     });
   } else {
@@ -112,7 +128,13 @@ exports.createCafeteriaTransaction = (req, res, next) => {
       console.log(err);
       if(err)
         return res.status(500).json({ message: 'Error creating transaction' });
-      return res.sendStatus(204);
+      const order = { user: user, order: orderString, total: totalTransaction };
+      const newOrder = new ordersModel(order);
+      newOrder.save(err => {
+        if(err)
+          return res.status(500).json({ message: 'Error creating order' });
+        return res.sendStatus(204);
+      });
     });
   }
 };
