@@ -8,7 +8,7 @@ exports.getOrders = (req, res, next) => {
 };
 
 exports.validateOrder = (req, res, next) => {
-  ordersModel.find({ _id: req.orderId}).then(order => {
+  ordersModel.findById(req.body.orderId).then(order => {
     order.validated = true;
     order.save(err => {
       if(err)
