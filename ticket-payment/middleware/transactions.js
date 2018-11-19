@@ -112,7 +112,7 @@ exports.createCafeteriaTransaction = (req, res, next) => {
         if(err)
           return res.status(500).json({ message: 'Error creating transaction' });
 
-        const order = { user: user, order: orderString, total: totalTransaction };
+        const order = { user: user, order: orderString, total: totalTransaction, username: req.payload.username};
         const newOrder = new ordersModel(order);
         newOrder.save(err => {
           if(err)
@@ -128,7 +128,7 @@ exports.createCafeteriaTransaction = (req, res, next) => {
       console.log(err);
       if(err)
         return res.status(500).json({ message: 'Error creating transaction' });
-      const order = { user: user, order: orderString, total: totalTransaction };
+      const order = { user: user, order: orderString, total: totalTransaction, username: req.payload.username };
       const newOrder = new ordersModel(order);
       newOrder.save(err => {
         if(err)

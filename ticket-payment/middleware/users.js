@@ -23,6 +23,7 @@ exports.decodeAndVerifyUser = (req, res, next) => {
 
           req.payload = payload;
           req.payload.userId = user._id;
+          req.payload.username = user.username;
           return next();
         });
       }
