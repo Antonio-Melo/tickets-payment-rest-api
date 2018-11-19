@@ -18,7 +18,7 @@ exports.getUserTickets = (req, res, next) => {
       let showsIds = [];
       let uniqueShowsIds = [];
       let promiseCalls = [];
-      
+
       tickets.forEach(showJson => showsIds.push(showJson.show))
       uniqueShowsIds = Array.from(new Set(showsIds));
       uniqueShowsIds.forEach(showId => promiseCalls.push(showsMiddleware.getShowAndUserTickets(showId, userId)));
@@ -88,7 +88,11 @@ exports.buyTickets = (req, res, next) => {
 exports.validateTicket = (user, ticketUUID) => new Promise((resolve, reject) => {
   const userID = mongoose.Types.ObjectId(user);
   ticketsModel.findOneAndUpdate({ uuid: ticketUUID, owner: userID, validated: false }, { validated: true})
-  .then(ticket => resolve())
+  .then(ticket => {
+    if(ticket == null)
+      return reject();
+    return resolve();
+  })
   .catch(err => reject());
 });
 
